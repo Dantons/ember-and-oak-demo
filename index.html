@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember & Oak — Handcrafted Cookware</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1714;
+      --cream: #f5f0e8;
+      --warm: #c8a87c;
+      --ember: #b85c38;
+      --smoke: #6b6560;
+      --ash: #9c9690;
+      --white: #fefcf9;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: rgba(245, 240, 232, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(26, 23, 20, 0.06);
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .logo span { color: var(--ember); }
+
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--smoke);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-cta {
+      background: var(--ink) !important;
+      color: var(--cream) !important;
+      padding: 10px 24px !important;
+      border-radius: 100px !important;
+      font-size: 13px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.04em !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--ember) !important; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 60%;
+      height: 140%;
+      background: radial-gradient(ellipse at center, rgba(184, 92, 56, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: 640px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ember);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 28px;
+      color: var(--ink);
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--ember);
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--smoke);
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions { display: flex; gap: 16px; align-items: center; }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 16px 40px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      background: var(--ember);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      color: var(--smoke);
+      padding: 16px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .btn-secondary:hover { color: var(--ink); }
+
+    .hero-image {
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45%;
+      max-width: 560px;
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, #d4c4b0 0%, #a89080 50%, #8b7668 100%);
+      border-radius: 320px 320px 24px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-image-inner {
+      font-family: var(--serif);
+      font-size: 120px;
+      color: rgba(255,255,255,0.3);
+      user-select: none;
+    }
+
+    /* ─── SOCIAL PROOF ─── */
+    .social-proof {
+      padding: 40px 48px;
+      border-top: 1px solid rgba(26, 23, 20, 0.08);
+      border-bottom: 1px solid rgba(26, 23, 20, 0.08);
+      display: flex;
+      justify-content: center;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .proof-item {
+      text-align: center;
+    }
+
+    .proof-number {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .proof-label {
+      font-size: 12px;
+      color: var(--ash);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ─── FEATURES ─── */
+    .features {
+      padding: 120px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .section-header h2 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .section-header p {
+      font-size: 17px;
+      color: var(--smoke);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+    }
+
+    .feature-card {
+      padding: 40px 32px;
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid rgba(26, 23, 20, 0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(26, 23, 20, 0.08);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--ember), var(--warm));
+      border-radius: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .feature-card h3 {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--smoke);
+      line-height: 1.65;
+    }
+
+    /* ─── PRODUCT SHOWCASE ─── */
+    .showcase {
+      padding: 120px 48px;
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .showcase .section-header h2 { color: var(--cream); }
+    .showcase .section-header p { color: var(--ash); }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .product-card:hover { border-color: rgba(200, 168, 124, 0.3); }
+
+    .product-img {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #2a2520, #3d3530, #2a2520);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-img-inner {
+      font-family: var(--serif);
+      font-size: 64px;
+      color: rgba(200, 168, 124, 0.2);
+      user-select: none;
+    }
+
+    .product-info { padding: 24px; }
+
+    .product-info h3 {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .product-info p {
+      font-size: 14px;
+      color: var(--ash);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .product-price {
+      font-family: var(--serif);
+      font-size: 20px;
+      color: var(--warm);
+      font-weight: 600;
+    }
+
+    .product-btn {
+      display: inline-block;
+      margin-top: 16px;
+      background: transparent;
+      color: var(--cream);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .product-btn:hover {
+      background: var(--ember);
+      border-color: var(--ember);
+    }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials {
+      padding: 120px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+
+    .testimonial-card {
+      padding: 40px;
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid rgba(26, 23, 20, 0.06);
+    }
+
+    .testimonial-card blockquote {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .testimonial-role {
+      font-size: 13px;
+      color: var(--ash);
+      margin-top: 2px;
+    }
+
+    /* ─── CTA SECTION ─── */
+    .cta-section {
+      padding: 120px 48px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--cream) 0%, #ede6da 100%);
+    }
+
+    .cta-section h2 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 4.5vw, 56px);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .cta-section h2 em {
+      font-style: italic;
+      color: var(--ember);
+    }
+
+    .cta-section p {
+      font-size: 17px;
+      color: var(--smoke);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .cta-actions { display: flex; gap: 16px; justify-content: center; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 60px 48px 40px;
+      background: var(--ink);
+      color: var(--ash);
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .logo { color: var(--cream); }
+
+    .footer-tagline {
+      font-size: 14px;
+      color: var(--ash);
+      margin-top: 8px;
+      max-width: 280px;
+    }
+
+    .footer-links { display: flex; gap: 64px; }
+
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 14px;
+      color: var(--ash);
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--cream); }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .footer-bottom a {
+      color: var(--ash);
+      text-decoration: none;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-content { animation: fadeUp 0.8s ease-out; }
+    .hero-image { animation: fadeUp 1s ease-out 0.2s both; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .hero { padding: 100px 24px 60px; flex-direction: column; }
+      .hero-image { position: relative; right: auto; top: auto; transform: none; width: 100%; margin-top: 48px; }
+      .feature-grid, .product-grid { grid-template-columns: 1fr; }
+      .testimonial-grid { grid-template-columns: 1fr; }
+      .social-proof { flex-wrap: wrap; gap: 32px; padding: 32px 24px; }
+      .features, .showcase, .testimonials, .cta-section { padding: 80px 24px; }
+      .footer-top { flex-direction: column; gap: 40px; }
+      .footer-links { gap: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">Ember <span>&</span> Oak</a>
+    <div class="nav-links">
+      <a href="#features">Craft</a>
+      <a href="#products">Shop</a>
+      <a href="#reviews">Reviews</a>
+      <a class="nav-cta" href="#buy">Shop Now</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Handcrafted in small batches</div>
+      <h1>Cookware that becomes part of the <em>family</em></h1>
+      <p>Cast iron and carbon steel, forged by hand in our Nova Scotia workshop. Built to last generations — not planned obsolescence cycles.</p>
+      <div class="hero-actions">
+        <a href="#buy" class="btn-primary">Shop the Collection</a>
+        <a href="#features" class="btn-secondary">See our process →</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-image-inner">🍳</div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF BAR -->
+  <section class="social-proof">
+    <div class="proof-item">
+      <div class="proof-number">12,400+</div>
+      <div class="proof-label">Kitchens served</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-number">4.9★</div>
+      <div class="proof-label">Average rating</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-number">25 yr</div>
+      <div class="proof-label">Warranty</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-number">100%</div>
+      <div class="proof-label">Canadian made</div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Why serious cooks choose Ember & Oak</h2>
+      <p>Every piece is forged with intention. No coatings to flake. No handles to loosen. Just honest materials that improve with every meal.</p>
+    </div>
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon">🔥</div>
+        <h3>Open-Flame Forged</h3>
+        <p>Each pan is hand-forged over an open coal fire at 1200°C, creating a molecular structure that distributes heat more evenly than any factory stamping process.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">🌿</div>
+        <h3>Naturally Non-Stick</h3>
+        <p>Our seasoning process uses organic flaxseed oil, baked in seven layers. The result is a surface that rivals synthetic coatings — without the chemicals.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Built for Generations</h3>
+        <p>Our cookware doesn't have a lifespan — it has a legacy. Passed from kitchen to kitchen, every piece develops a unique patina that tells your story.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="showcase" id="products">
+    <div class="section-header">
+      <h2>The Collection</h2>
+      <p>Three essential pieces for the home cook who refuses to compromise. Each one hand-finished and stamped with its forge date.</p>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-inner">⬬</div>
+        </div>
+        <div class="product-info">
+          <h3>The Foundry Skillet</h3>
+          <p>12" cast iron. Our flagship piece. Perfect sear, oven-safe to 600°F, and a handle that stays cool on the stovetop.</p>
+          <div class="product-price">$185</div>
+          <a href="#buy" class="product-btn">Add to Cart</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-inner">◯</div>
+        </div>
+        <div class="product-info">
+          <h3>The Carbon Wok</h3>
+          <p>14" blue carbon steel. Lightweight, responsive, and hand-hammered for superior wok hei. Goes from cold to screaming in 90 seconds.</p>
+          <div class="product-price">$210</div>
+          <a href="#buy" class="product-btn">Add to Cart</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-img">
+          <div class="product-img-inner">▭</div>
+        </div>
+        <div class="product-info">
+          <h3>The Hearthstone Dutch Oven</h3>
+          <p>6-quart enameled cast iron. Slow braises, sourdough bakes, one-pot suppers. The piece that anchors a Sunday kitchen.</p>
+          <div class="product-price">$245</div>
+          <a href="#buy" class="product-btn">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="reviews">
+    <div class="section-header">
+      <h2>What our community says</h2>
+      <p>Real words from real kitchens. No sponsored posts, no influencer deals — just cooks who found their forever pan.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <blockquote>"I've cooked professionally for 18 years. This skillet outperforms pans that cost three times as much. The heat distribution is unreal."</blockquote>
+        <div class="testimonial-author">Chef Marcus Beaulieu</div>
+        <div class="testimonial-role">Executive Chef, Halifax</div>
+      </div>
+      <div class="testimonial-card">
+        <blockquote>"Bought one for myself, then bought three more as wedding gifts. It's the kind of thing people actually keep forever."</blockquote>
+        <div class="testimonial-author">Sarah Macintyre</div>
+        <div class="testimonial-role">Home cook, Toronto</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="buy">
+    <h2>Start cooking with <em>intention</em></h2>
+    <p>Free shipping across Canada. 25-year warranty. If you don't love it in 30 days, send it back — no questions, no forms, no hassle.</p>
+    <div class="cta-actions">
+      <a href="#products" class="btn-primary">Shop the Collection</a>
+      <a href="#features" class="btn-secondary">Learn about our process →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer data-foundry-protect>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">Ember <span>&</span> Oak</a>
+        <div class="footer-tagline">Handcrafted cookware from our Nova Scotia forge to your kitchen.</div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <a href="#">The Foundry Skillet</a>
+          <a href="#">The Carbon Wok</a>
+          <a href="#">The Hearthstone</a>
+          <a href="#">Gift Sets</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#">Our Story</a>
+          <a href="#">The Workshop</a>
+          <a href="#">Wholesale</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="#">Shipping & Returns</a>
+          <a href="#">Care Guide</a>
+          <a href="#">Warranty</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ember & Oak Cookware Co. All rights reserved.</span>
+      <div>
+        <a href="#">Privacy Policy</a> · <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOUNDRYOS LENS TAG — paste your tag below to test
+       ═══════════════════════════════════════════════════════════ -->
+  <!--
+  <script src="https://cdn.foundryos.ca/signal.js"
+          data-site-id="YOUR_SITE_ID"
+          data-endpoint="https://YOUR_SUPABASE_URL/functions/v1/lens"
+          data-api-key="YOUR_ANON_KEY"
+          data-debug="true" async>
+  </script>
+  -->
+
+</body>
+</html>
